@@ -6,13 +6,16 @@ import java.util.List;
 
 import org.hyperion.cache.defs.ObjectDef;
 import org.hyperion.plugin.Plugin;
+import org.hyperion.plugin.PluginManager;
 import org.hyperion.rs2.model.Entity;
+import org.hyperion.rs2.model.ItemDefinition;
 import org.hyperion.rs2.model.Location;
+import org.hyperion.rs2.model.NPCDefinition;
 import org.hyperion.rs2.model.Player;
 
 /**
  * Handles an interaction option.
- * @author Emperor
+ * @author jamix77
  */
 public abstract class OptionHandler implements Plugin<Object> {
 
@@ -23,33 +26,24 @@ public abstract class OptionHandler implements Plugin<Object> {
 	 * @param option The option selected.
 	 * @return {@code True} if successful.
 	 */
-	public abstract boolean handle(Player player, Entity node, String option);
+	public abstract boolean handle(Player player, Object node, String option);
 
-	/**
-	 * Checks if the option should be handled after 1 game tick.
-	 * @param player The player.
-	 * @return {@code True} if so.
-	 */
-	public boolean isDelayed(Player player) {
-		return true;
+	public void npc(int npcId,String option) {
+		NPCDefinition.forId(npcId).getHandlers().put("option:"+option, this);
 	}
-
-	/**
-	 * Checks if it needs a walk..
-	 * @param node the node.
-	 * @return true if so.
-	 */
-	public boolean isWalk(final Player player, final Entity node) {
-		return false;
+	
+	public void object(int objId,String option) {
+		ObjectDef.forId(objId).getHandlers().put("option:"+option, this);
 	}
-
-	/**
-	 * Gets the walk.
-	 * @return if a walk is required.
-	 */
-	public boolean isWalk() {
-		return true;
+	
+	public void item(int itemId, String option) {
+		ItemDefinition.forId(itemId).getHandlers().put("option:"+option, this);
 	}
+	
+	public void option(String option) {
+		PluginManager.getOptionHandlerPlugins().put(option, this);
+	}
+	
 
 	/**
 	 * Gets the custom destination for the node.

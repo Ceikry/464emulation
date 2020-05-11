@@ -27,11 +27,12 @@ public class TalkHandlerPlugin extends OptionHandler {
 
 	@Override
 	public void init() throws Throwable {
-		PluginManager.getOptionHandlerPlugins().put("npc:talk-to", this);
+		option("npc:talk-to");//adds the default case for the talk to options on npcs to this plugin using this.
 	}
 
 	@Override
-	public boolean handle(Player player, Entity node, String option) {
+	public boolean handle(Player player, Object node, String option) {
+		NPC npc = (NPC)node;
 		Dialogue d = PluginManager.getDialoguePlugins().get(((NPC)node).getDefinition().getId());
 		if (d != null) {
 			try {
@@ -40,7 +41,7 @@ public class TalkHandlerPlugin extends OptionHandler {
 			} catch (Throwable e) {
 			}
 		}
-		player.getActionSender().sendMessage(((NPC)node).getDefinition().getName() + " isn't interested in talking.");
+		player.getActionSender().sendMessage(npc.getDefinition().getName() + " isn't interested in talking.");
 		return true;
 	}
 
